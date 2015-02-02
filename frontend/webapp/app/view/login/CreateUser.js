@@ -9,7 +9,7 @@ Ext.define("SauceApp.view.login.CreateUser",{
 
     controller: 'login',
     bodyPadding: 10,
-    title: '设备管理系统-创建系统管理员',
+    title: '创建系统管理员',
     closable: false,
     autoShow: true,
     
@@ -22,8 +22,7 @@ Ext.define("SauceApp.view.login.CreateUser",{
 			labelAlign : "left",
 			items : [{
 				xtype : 'textfield',
-				name : 'LoginForm[username]',
-				id : 'userName',
+				name : 'CreateUser[username]',
 				fieldLabel : '用户名',
 				allowBlank : false,
 				blankText : '请输入用户名',
@@ -33,8 +32,7 @@ Ext.define("SauceApp.view.login.CreateUser",{
 			}, {
 				xtype : 'textfield',
 				inputType : 'password',
-				name : 'LoginForm[password]',
-				id : 'password',
+				name : 'CreateUser[password]',
 				fieldLabel : '密码',
 				allowBlank : false,
 				blankText : '请输入密码',
@@ -44,11 +42,10 @@ Ext.define("SauceApp.view.login.CreateUser",{
 			}, {
 				xtype : 'textfield',
 				inputType : 'password',
-				name : 'LoginForm[password]',
-				id : 'password11',
-				fieldLabel : '密码',
+				name : 'CreateUser[confirmPassword]',
+				fieldLabel : '确认密码',
 				allowBlank : false,
-				blankText : '请输入密码',
+				blankText : '请输入确认密码',
 				msgTarget : 'side',
 				selectOnFocus : true,
 				enableKeyEvents : true
@@ -65,7 +62,7 @@ Ext.define("SauceApp.view.login.CreateUser",{
 			text : '<b>创建</b>',
 			formBind: true,
             listeners: {
-                click: 'onLoginClick'
+                click: 'OnCreateUser'
             }
 		}];
 		this.callParent(arguments);

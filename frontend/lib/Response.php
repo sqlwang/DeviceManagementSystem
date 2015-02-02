@@ -16,7 +16,7 @@ class Response {
     }
 
     public function to_json() {
-        return json_encode(array(
+        echo json_encode(array(
             'success'   => $this->success,
             'message'   => $this->message,
             'data'      => $this->data,

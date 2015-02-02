@@ -41,6 +41,11 @@ return [
         ],
         'urlManager' => [
              'enablePrettyUrl' => true,
+             'enableStrictParsing'=> false,
+             'rules' => [
+             	'<controller:\w+>/<action:\w+>/<id:\w+>' => '<controller>/<action>',
+   				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+             ]
         ]
     ],
     'params' => $params,

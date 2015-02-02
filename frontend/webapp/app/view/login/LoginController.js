@@ -8,8 +8,7 @@ Ext.define('SauceApp.view.login.LoginController', {
 			var values = loginForm.getValues();
 			var ok;
 			loginForm.submit({
-				url : 'index.php/Site/Login'//Simula OK
-				,
+				url : '../web/index.php/Site/Login',
 				method : 'POST',
 				scope : this,
 				success : function(form, action) {
@@ -17,11 +16,6 @@ Ext.define('SauceApp.view.login.LoginController', {
 			        this.getView().destroy();
 			        // Add the main view to the viewport
 			       	Ext.widget('app-main');
-			       	
-			       	if(action.result.data.is_operator_manage){
-						Ext.getCmp('operator_manage_privilege').setDisabled(false);
-						Ext.getCmp('operator_manage_privilege').setHidden(false);
-					}
 				},
 				failure : function(form, action) {
 					var lblField = Ext.getCmp('msgField');
@@ -35,5 +29,34 @@ Ext.define('SauceApp.view.login.LoginController', {
 			});
 
 		}
+	},
+	OnCreateUser:function(button){
+		var createWin = button.up('window');
+		var createForm = createWin.down('form');
+		if (createForm.getForm().isValid()) {
+			var values = createForm.getValues();
+			var ok;
+			createForm.submit({
+				url : '../web/index.php/site/create-user',
+				method : 'POST',
+				scope : this,
+				success : function(form, action) {
+					// Remove Login Window
+			        this.getView().destroy();
+			        // Add the main view to the viewport
+			       	Ext.widget('login');
+				},
+				failure : function(form, action) {
+					var lblField = Ext.getCmp('msgField');
+					if (lblField) {
+						switch (action.failureType) {
+							case Ext.form.action.Action.SERVER_INVALID :
+								lblField.setText(action.result.message || "账号或密码错误", false);
+						}
+					}
+				}
+			});
+		}
 	}
+	
 });

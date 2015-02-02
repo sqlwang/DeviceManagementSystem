@@ -119,6 +119,24 @@ class SiteController extends Controller
        	$res->data = array();
 		echo $res->to_json();
 	}
+	
+	/**
+	 * 系统初始化，创建管理员
+	 * 
+	 * */
+	 public function actionCreateUser(){
+	 	$params =Yii::$app->request->post("CreateUser");
+		$user = empty($params['username']) ? '' : $params['username'];
+		$pwd = empty($params['password']) ? '' : $params['password'];
+		$confirm_pwd = empty($params['confirmPassword']) ? '' : $params['confirmPassword'];
+		$res = new Response();
+		if ($pwd != $confirm_pwd) {
+			$res->success = false;
+       		$res->message = '两次密码输入不一样';
+       		$res->data = array();
+		}
+		$res->to_json();
+	 }
 
     public function actionRequestPasswordReset()
     {
