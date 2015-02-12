@@ -8,7 +8,7 @@ Ext.define('SauceApp.view.login.LoginController', {
 			var values = loginForm.getValues();
 			var ok;
 			loginForm.submit({
-				url : '../web/index.php/Site/Login',
+				url : '../web/index.php/site/login',
 				method : 'POST',
 				scope : this,
 				success : function(form, action) {
@@ -37,7 +37,7 @@ Ext.define('SauceApp.view.login.LoginController', {
 			var values = createForm.getValues();
 			var ok;
 			createForm.submit({
-				url : '../web/index.php/site/create-user',
+				url : '../web/index.php/site/create-admin',
 				method : 'POST',
 				scope : this,
 				success : function(form, action) {

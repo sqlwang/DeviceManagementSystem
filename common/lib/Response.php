@@ -3,7 +3,7 @@
  * @class Response
  * A simple JSON Response class.
  */
-namespace frontend\lib; 
+namespace common\lib; 
 use Yii;
  
 class Response {

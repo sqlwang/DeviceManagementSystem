@@ -49,6 +49,15 @@ Ext.define("SauceApp.view.login.CreateUser",{
 				msgTarget : 'side',
 				selectOnFocus : true,
 				enableKeyEvents : true
+			}, {
+				xtype : 'textfield',
+				name : 'CreateUser[email]',
+				fieldLabel : '邮箱',
+				allowBlank : false,
+				blankText : '请输入邮箱地址',
+				msgTarget : 'side',
+				selectOnFocus : true,
+				enableKeyEvents : true
 			}]
 		}];
 		this.buttons = [{

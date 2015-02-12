@@ -2,12 +2,9 @@
 namespace frontend\controllers;
 
 use Yii;
-use common\models\LoginForm;
-use frontend\models\PasswordResetRequestForm;
-use frontend\models\ResetPasswordForm;
-use frontend\models\SignupForm;
-use frontend\models\ContactForm;
-use frontend\lib\Response;
+use frontend\models\LoginForm;
+use frontend\models\User;
+use common\lib\Response;
 
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -63,8 +60,8 @@ class SiteController extends Controller
             ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null
+            ]
         ];
     }
 
@@ -75,18 +72,19 @@ class SiteController extends Controller
 
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
+        // if (!Yii::$app->user->isGuest) {
+            // return $this->goHome();
+        // }
+		$res = new Response();
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        	$res->success = true;
+       	 	$res->message = '登录成功';
         } else {
-            return $this->render('login', [
-                'model' => $model,
-            ]);
+        	$res->success = false;
+       	 	$res->message = '登录失败';
         }
+		$res->to_json();
     }
 
     public function actionLogout()
@@ -114,27 +112,55 @@ class SiteController extends Controller
        	 	// $res->message = '';
        		// $res->data = array();
 		// }
+		$exist_admin = User::find()->all();
+		if (empty($exist_admin)) {
+			$res->data = array(
+				'exist_admin' => false
+			);
+		} else {
+			$res->data = array(
+				'exist_admin' => true
+			);
+		}
 		$res->success = false;
-       	$res->message = '';
-       	$res->data = array();
-		echo $res->to_json();
+		$res->to_json();
 	}
 	
 	/**
 	 * 系统初始化，创建管理员
 	 * 
 	 * */
-	 public function actionCreateUser(){
+	 public function actionCreateAdmin(){
 	 	$params =Yii::$app->request->post("CreateUser");
-		$user = empty($params['username']) ? '' : $params['username'];
+		$user_name = empty($params['username']) ? '' : $params['username'];
 		$pwd = empty($params['password']) ? '' : $params['password'];
 		$confirm_pwd = empty($params['confirmPassword']) ? '' : $params['confirmPassword'];
+		$email = empty($params['email']) ? '' : $params['email'];
+		
 		$res = new Response();
 		if ($pwd != $confirm_pwd) {
 			$res->success = false;
        		$res->message = '两次密码输入不一样';
-       		$res->data = array();
 		}
+		
+		$is_user = User::find()->all();
+		//判断是否创建过管理员帐号
+		if (!empty($is_user)) {
+			$res->success = false;
+       		$res->message = '该系统已经创建过测试帐号';
+		} 
+		$user = new User;
+		$user->username = $user_name;
+		$user->password_hash = $pwd;
+		$user->email = $email;
+		if ($user->validate() && $user->save()) {
+			$res->success = true;
+       		$res->message = '创建系统管理员成功';
+		} else {
+			$res->success = false;
+       		$res->message = '创建系统管理员失败';
+		}
+		
 		$res->to_json();
 	 }
 

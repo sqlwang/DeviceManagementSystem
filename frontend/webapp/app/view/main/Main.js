@@ -7,6 +7,7 @@
  */
 Ext.define('SauceApp.view.main.Main', {
     extend: 'Ext.container.Container',
+    plugins: 'viewport',
     requires: [
         'SauceApp.view.main.MainController',
         'SauceApp.view.main.MainModel'

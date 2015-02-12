@@ -45,7 +45,11 @@ Ext.define('SauceApp.Application', {
 				if(retorno.success) {
 					Ext.widget('app-main');
 				} else {
-					Ext.widget('create-user');
+					if(retorno.data.exist_admin){
+						Ext.widget('login');
+					}else{
+						Ext.widget('create-user');
+					}
 				}
 			},
 			failure : function(result, request) {
