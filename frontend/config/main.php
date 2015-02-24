@@ -51,6 +51,11 @@ return [
             'identityClass' => 'frontend\models\User',
             'enableAutoLogin' => true,
         ],
+        'session' => [
+		    'class' => 'yii\web\DbSession',
+		    'db' => 'db',
+		    'sessionTable' => 'session',
+		]
     ],
     'params' => $params,
 ];

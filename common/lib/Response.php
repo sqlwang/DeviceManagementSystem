@@ -22,5 +22,6 @@ class Response {
             'data'      => $this->data,
             'totalCount'      => $this->totalCount
         ));
+		return;
     }
 }

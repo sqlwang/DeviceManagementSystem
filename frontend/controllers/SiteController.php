@@ -6,6 +6,7 @@ use frontend\models\LoginForm;
 use frontend\models\User;
 use common\lib\Response;
 
+use  yii\web\Session;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -78,6 +79,7 @@ class SiteController extends Controller
 		$res = new Response();
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        	
         	$res->success = true;
        	 	$res->message = '登录成功';
         } else {
@@ -100,29 +102,32 @@ class SiteController extends Controller
 	public function actionIslogged()
 	{
 		$res = new Response();
-		// if(!Yii::app()->user->isGuest){
-			// $res->success = true;
-       	 	// $res->message = '';
-       		// $res->data = array(
-				// 'id' => Yii::app()->user->id,
-				// 'name' => Yii::app()->user->userName,
-			// );
-		// }else{
-			// $res->success = false;
-       	 	// $res->message = '';
-       		// $res->data = array();
-		// }
+		//如果没有管理员存在，初始化管理员
 		$exist_admin = User::find()->all();
 		if (empty($exist_admin)) {
 			$res->data = array(
 				'exist_admin' => false
 			);
-		} else {
-			$res->data = array(
+			$res->success = true;
+       	 	$res->message = '';
+			$res->to_json();
+		} 
+		
+		if(Yii::$app->user->getId()){
+			$res->success = true;
+       	 	$res->message = '';
+       		$res->data = array(
+				'id' => Yii::app()->user->id,
+				'exist_admin' => true
+				//'name' => Yii::app()->user->userName,
+			);
+		}else{
+			$res->success = false;
+       	 	$res->message = '';
+       		$res->data = array(
 				'exist_admin' => true
 			);
 		}
-		$res->success = false;
 		$res->to_json();
 	}
 	

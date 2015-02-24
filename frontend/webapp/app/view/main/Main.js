@@ -10,7 +10,12 @@ Ext.define('SauceApp.view.main.Main', {
     plugins: 'viewport',
     requires: [
         'SauceApp.view.main.MainController',
-        'SauceApp.view.main.MainModel'
+        'SauceApp.view.main.MainModel',
+        'SauceApp.view.layout.Footer',
+        'SauceApp.view.layout.Header',
+        'SauceApp.view.layout.Left',
+        'SauceApp.view.layout.Middle',
+        'SauceApp.view.layout.Right'
     ],
 
     xtype: 'app-main',
@@ -23,26 +28,10 @@ Ext.define('SauceApp.view.main.Main', {
     layout: {
         type: 'border'
     },
-
-    items: [{
-        xtype: 'panel',
-        bind: {
-            title: '{name}'
-        },
-        region: 'west',
-        html: '<ul><li>This area is commonly used for navigation, for example, using a "tree" component.</li></ul>',
-        width: 250,
-        split: true,
-        tbar: [{
-            text: 'Button',
-            handler: 'onClickButton'
-        }]
-    },{
-        region: 'center',
-        xtype: 'tabpanel',
-        items:[{
-            title: 'Tab 1',
-            html: '<h2>Content appropriate for the current navigation.</h2>'
-        }]
-    }]
+    items: [ {xtype:'layoutheader'},
+    //{xtype:'layoutfooter'},
+    {xtype:'layoutleft'},
+    //{xtype:'layoutright'},
+    {xtype:'layoutmiddle'}//middle
+    ]
 });
