@@ -2,7 +2,7 @@
  * 左侧导航视图
  * @date 2014-10-31
  */
-Ext.define('SauceApp.view.Doordu.LeftNav.NavTree', {
+Ext.define('SauceApp.view.LeftNav.NavTree', {
     extend: 'Ext.tree.Panel',
     xtype: 'NavTree',
     title: 'Navigation',
@@ -11,7 +11,7 @@ Ext.define('SauceApp.view.Doordu.LeftNav.NavTree', {
     collapsible: true,
     rootVisible: false,
     requires: [
-        'SauceApp.view.Doordu.LeftNav.LeftNavController'
+        'SauceApp.view.LeftNav.LeftNavController'
     ],
     controller: 'LeftNav',
     listeners: {
@@ -29,7 +29,7 @@ Ext.define('SauceApp.view.Doordu.LeftNav.NavTree', {
             idProperty :['id'],
             proxy: {
                 type: 'ajax',
-                url: 'index.php/privileges/NavList'
+                url: '../web/index.php/privileges/NavList'
             },
             reader : {
 				type : 'json',

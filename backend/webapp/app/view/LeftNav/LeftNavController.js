@@ -1,4 +1,4 @@
-Ext.define('SauceApp.view.Doordu.LeftNav.LeftNavController', {
+Ext.define('SauceApp.view.LeftNav.LeftNavController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.LeftNav',
     onTreeClick: function(view, selectedItem){
@@ -19,7 +19,8 @@ Ext.define('SauceApp.view.Doordu.LeftNav.LeftNavController', {
 		// 如果此tab还未被创建，则向tab容器添加一个tab
 		if (!tab) {
 			if (selectedItem.data.id == 'estate_manage') {
-		
+				
+			}
 			// 将tab设置为当前可见可操作tab
 			tabPanel.setActiveTab(tab);
 			// 其实这步是多余的，但是在IE9下，没这步就显示不正常。

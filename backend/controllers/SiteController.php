@@ -6,7 +6,7 @@ use backend\models\LoginForm;
 use backend\models\User;
 use common\lib\Response;
 
-use  yii\web\Session;
+use yii\web\Session;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -108,25 +108,25 @@ class SiteController extends Controller
 			$res->data = array(
 				'exist_admin' => false
 			);
-			$res->success = true;
-       	 	$res->message = '';
-			$res->to_json();
-		} 
-		
-		if(Yii::$app->user->getId()){
-			$res->success = true;
-       	 	$res->message = '';
-       		$res->data = array(
-				'id' => Yii::app()->user->id,
-				'exist_admin' => true
-				//'name' => Yii::app()->user->userName,
-			);
-		}else{
 			$res->success = false;
        	 	$res->message = '';
-       		$res->data = array(
-				'exist_admin' => true
-			);
+			$res->to_json();
+		}else{
+			if(Yii::$app->user->getId()){
+				$res->success = true;
+	       	 	$res->message = '';
+	       		$res->data = array(
+					//'id' => Yii::app()->user->getId(),
+					'exist_admin' => true
+					//'name' => Yii::app()->user->userName,
+				);
+			}else{
+				$res->success = false;
+	       	 	$res->message = '';
+	       		$res->data = array(
+					'exist_admin' => true
+				);
+			}
 		}
 		$res->to_json();
 	}
@@ -161,11 +161,24 @@ class SiteController extends Controller
 		if ($user->validate() && $user->save()) {
 			$res->success = true;
        		$res->message = '创建系统管理员成功';
+			//为超级管理员授权
+			$auth = Yii::$app->authManager;
+			$role = $auth ->createRole('admin') ;
+			$updateOwnPost = $this->auth->createPermission('updateOwnPost');
+			$updateOwnPost->description = 'Update own post';
+			$updateOwnPost->ruleName = $rule->name;
+			$auth->add($updateOwnPost);
+			var_dump($role);
+			exit;
+			
+			if(!$auth->assign( $role, $user->user_id)){
+				$res->success = false;
+       			$res->message = '创建系统管理员权限失败';
+			}
 		} else {
 			$res->success = false;
        		$res->message = '创建系统管理员失败';
 		}
-		
 		$res->to_json();
 	 }
 

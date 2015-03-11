@@ -9,6 +9,10 @@ $config = [
         'gii' => 'yii\gii\Module'
     ],
     'components' => [
+     	'request' => [
+            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
+            'cookieValidationKey' => 'cDou5AtBrKAiOL31bb7VA9hPuAsNOkoe',
+        ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,

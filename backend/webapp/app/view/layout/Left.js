@@ -3,9 +3,9 @@ Ext.define('SauceApp.view.layout.Left' ,{
     alias : 'widget.layoutleft',
 	region: 'west',
 	split: true,
-	//requires: [ 'SauceApp.view.Doordu.LeftNav.NavTree'],
+	requires: [ 'SauceApp.view.LeftNav.NavTree'],
     items: [{
-    	//xtype: 'NavTree'
+    	xtype: 'NavTree'
     }],
     
     initComponent: function() {
