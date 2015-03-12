@@ -28,40 +28,23 @@ class PrivilegesController extends Controller {
 		
 		$auth = Yii::$app->authManager;
 		$user_id = Yii::$app->user->id;
-		
-		$permissions =  $auth->getRolesByUser($user_id);
-		var_dump($permissions);
-		
-		// $items = Yii::app() -> db -> createCommand() -> 
-			// select('c.name as taskName, c.description as taskDescription,c.data as item_data') 
-			// -> from('AuthItem a') 
-			// -> join('AuthItemChild b', 'a.name = b.parent') 
-			// -> join('AuthItem c', 'c.name = b.child') 
-			// -> join('AuthAssignment d', 'd.itemname = a.name') 
-			// -> where('c.type = :id and d.userid = :user_id', array('id' => 1, 'user_id' => Yii::app() -> user -> id)) 
-			// -> queryAll();
-		// $data = array();
-		// foreach ($items as $key => $value) {
-			// $NextTaks = $this -> actionGetNextTask($value['taskName']);
-			// $is_leaf = empty($NextTaks['children']) ? true : false;
-			// $item_data =json_decode($value['item_data']);
-			// if (is_object($item_data)) {
-				// $item_data = get_object_vars($item_data);
-			// }
-			// $level = empty($item_data['level']) ? 1 : $item_data['level'];
-			// $array = array(
-				// 'id' => $value['taskName'], 
-				// 'text' => $value['taskDescription'], 
-				// 'leaf' => $is_leaf,
-				// 'level'=> $level
-			// );
-			// if (!$is_leaf) {
-				// $array = array_merge($array, $NextTaks);
-			// }
-			// array_push($data, $array);
-		// }
-// 
-		// echo json_encode($data);
+		$permissions =  $auth->getPermissionsByUser($user_id);
+		$data = array();
+		foreach ($permissions as $key => $value) {
+			$permissionsArray = get_object_vars($value);
+			
+		//	$level = empty($item_data['level']) ? 1 : $item_data['level'];
+			$is_leaf = empty($auth->getChildren( $permissionsArray['name'])) ? true :false;
+			
+			$array = array(
+				'id' => $permissionsArray['name'], 
+				'text' => $permissionsArray['description'], 
+				'leaf' => $is_leaf,
+				'level'=> 1
+			);
+			array_push($data, $array);
+		}
+		echo json_encode($data);
 	}
 	
 

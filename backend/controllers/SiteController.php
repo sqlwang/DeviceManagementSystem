@@ -163,13 +163,18 @@ class SiteController extends Controller
        		$res->message = '创建系统管理员成功';
 			//为超级管理员授权
 			$auth = Yii::$app->authManager;
-			$role = $auth ->createRole('admin') ;
-			$updateOwnPost = $this->auth->createPermission('updateOwnPost');
-			$updateOwnPost->description = 'Update own post';
-			$updateOwnPost->ruleName = $rule->name;
-			$auth->add($updateOwnPost);
-			var_dump($role);
-			exit;
+			
+			// //创建管理员
+		// $role = $auth->createRole('admin');
+    	// $role->description = '系统管理员';
+    	// $auth->add($role);
+
+		// $auth->addChild($role, $privileges_manage);
+		// $role = $auth->getRole( 'admin' );
+		// $auth->assign($role, $user_id);
+		
+			
+			
 			
 			if(!$auth->assign( $role, $user->user_id)){
 				$res->success = false;

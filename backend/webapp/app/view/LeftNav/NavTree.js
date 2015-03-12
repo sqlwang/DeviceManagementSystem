@@ -29,7 +29,7 @@ Ext.define('SauceApp.view.LeftNav.NavTree', {
             idProperty :['id'],
             proxy: {
                 type: 'ajax',
-                url: '../web/index.php/privileges/NavList'
+                url: '../web/index.php/privileges/nav-list'
             },
             reader : {
 				type : 'json',
