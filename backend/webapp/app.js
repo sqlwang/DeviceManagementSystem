@@ -6,7 +6,7 @@
 Ext.application({
     name: 'SauceApp',
 
-    extend: 'SauceApp.Application',
+    extend: 'SauceApp.Application'
     
     //autoCreateViewport: 'SauceApp.view.main.Main'
 	

@@ -18,15 +18,37 @@ Ext.define('SauceApp.view.LeftNav.LeftNavController', {
 		var tab = tabPanel.getComponent(selectedItem.data.id);
 		// 如果此tab还未被创建，则向tab容器添加一个tab
 		if (!tab) {
-			if (selectedItem.data.id == 'estate_manage') {
-				
+			if (selectedItem.data.id == 'privileges_manage') {
+				if(!Ext.ClassManager.isCreated('SauceApp.controller.PrivilegeController')){
+				    // we need to auto-load that controller using Ext.require()
+					//动态加载模块组件
+					Ext.require(                   
+					    'SauceApp.controller.PrivilegeController',     // this auto-loads all dependencies 
+					    function(){ 
+					    	// create an instance
+					        var controller = Ext.create('SauceApp.controller.PrivilegeController');  
+					         // launch init() method
+					        controller.init();   
+					        
+					        tab = tabPanel.add({
+								id : selectedItem.data.id,
+								title : selectedItem.data.text,
+								closable : true,
+								autoWidth : true,
+								autoHeight : true,
+								active : true,// 为了兼容IE9
+								layout : 'fit',
+								border : false,
+								items : [{
+									xtype: 'privileges-management'
+								}]
+							});
+							// 将tab设置为当前可见可操作tab
+							tabPanel.setActiveTab(tab);
+					    }
+					);
+				}
 			}
-			// 将tab设置为当前可见可操作tab
-			tabPanel.setActiveTab(tab);
-			// 其实这步是多余的，但是在IE9下，没这步就显示不正常。
-			// 异步加载js并执行，参数为要加载的JS文件的URL，这个JS包含tab内容区内容的构建程序。
-			// loadJS(selectedItem.data.hrefTarget);
-			// 此函数为自定义函数，已在上面定义。
 		}
 		// 将tab设置为当前可见可操作tab
 		tabPanel.setActiveTab(tab);

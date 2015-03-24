@@ -1,6 +1,7 @@
-Ext.define('SauceApp.view.Admin.Privileges.PrivilegesManagement', {
+Ext.define('SauceApp.view.privileges.PrivilegesManagement', {
 	extend : 'Ext.tab.Panel',
-	alias : 'widget.PrivilegesManagement',
+	
+	xtype : 'privileges-management',
     region : 'center',
 	items : [{
         title: '角色',
@@ -10,22 +11,26 @@ Ext.define('SauceApp.view.Admin.Privileges.PrivilegesManagement', {
     },{
         title: '任务',
         items: [{
-        	xtype : 'TaskList'
+        	//xtype : 'TaskList'
+        	xtype : 'panel'
         }]
     },{
         title: '操作',
         items: [{
-        	xtype : 'OperationList'
+        	//xtype : 'OperationList'
+        	xtype : 'panel'
         }]
     },{
         title: '角色权限分配',
         items: [{
-        	xtype : 'RoleAssignList'
+        	//xtype : 'RoleAssignList'
+        	xtype : 'panel'
         }]
     },{
         title: '任务权限分配',
         items: [{
-        	xtype : 'TaskAssignList'
+        //	xtype : 'TaskAssignList'
+        		xtype : 'panel'
         }]
     }],
 	initComponent : function() {

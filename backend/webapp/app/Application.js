@@ -1,3 +1,13 @@
+Ext.Loader.setConfig({
+	enabled : true,
+	paths : {
+		'SauceApp' : 'app',
+		'Ext.ux' : 'app/ux'
+	}
+});
+
+
+
 /**
  * The main application class. An instance of this class is created by app.js when it calls
  * Ext.application(). This is the ideal place to handle application launch and initialization
@@ -18,10 +28,10 @@ Ext.define('SauceApp.Application', {
     ],
     launch: function () {
         // TODO - Launch the application
-    	setTimeout(function(){
-	    	Ext.get('loading').remove();
-	    	Ext.get('loading-mask').fadeOut({remove:true});
-	  	}, 250);
+//    	setTimeout(function(){
+//	    	Ext.get('loading').remove();
+//	    	Ext.get('loading-mask').fadeOut({remove:true});
+//	  	}, 250);
         // Check whether the browser supports LocalStorage
         // It's important to note that this type of application could use
         // any type of storage, i.e., Cookies, LocalStorage, etc.
