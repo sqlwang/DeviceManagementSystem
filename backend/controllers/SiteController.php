@@ -71,6 +71,10 @@ class SiteController extends Controller
         return $this->render('index');
     }
 
+
+    /**
+     *
+     */
     public function actionLogin()
     {
         // if (!Yii::$app->user->isGuest) {
@@ -89,6 +93,9 @@ class SiteController extends Controller
 		$res->to_json();
     }
 
+    /**
+     * @return \yii\web\Response
+     */
     public function actionLogout()
     {
         Yii::$app->user->logout();
@@ -172,10 +179,10 @@ class SiteController extends Controller
 		// $auth->addChild($role, $privileges_manage);
 		// $role = $auth->getRole( 'admin' );
 		// $auth->assign($role, $user_id);
-		
-			
-			
-			
+
+
+
+
 			if(!$auth->assign( $role, $user->user_id)){
 				$res->success = false;
        			$res->message = '创建系统管理员权限失败';

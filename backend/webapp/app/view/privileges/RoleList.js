@@ -4,8 +4,11 @@ Ext.define('SauceApp.view.privileges.RoleList', {
 	xtype : 'RoleList',
 	loadMask: true,
 	id: 'adminRoleList',
-	//store: 'Admin.PRoleStore',
+	store: 'privileges.RoleStore',
 	initComponent : function() {
+		if (Ext.isString(this.store)) {
+			this.store = Ext.create('SauceApp.store.privileges.RoleStore');
+		}
 		this.dockedItems = [{
 			xtype : 'toolbar',
 			//dock: 'bottom',
@@ -48,11 +51,12 @@ Ext.define('SauceApp.view.privileges.RoleList', {
 		}];
 
 		this.bbar = new Ext.PagingToolbar({
-			//store : this.store,
+			store : this.store,
 			displayInfo : true,
 			pageSize : 10
 		});
 		this.callParent(arguments);
+		this.store.load();
 	}
 }); 
 //

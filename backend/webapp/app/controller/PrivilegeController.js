@@ -5,7 +5,11 @@
  */
 Ext.define('SauceApp.controller.PrivilegeController', {
 	extend : 'Ext.app.Controller',
+	
 	views : ['privileges.PrivilegesManagement','privileges.RoleList' ],
+	models: ['privileges.RoleModel'],
+    stores: ['privileges.RoleStore'],
+	
 	init : function() {
 		console.log('init PrivilegeController');
 	}

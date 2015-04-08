@@ -4,12 +4,14 @@ namespace backend\controllers;
 use Yii;
 use common\lib\Response;
 
+use yii\base\Request;
+
 use yii\web\Session;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\AccessControl;
-
+use yii\db\Query;
 
 class PrivilegesController extends Controller {
 	/**
@@ -183,18 +185,29 @@ class PrivilegesController extends Controller {
 
 	/**
 	 * 获取角色列表
+	 *
+	 * @return role list
+	 * @author lion 
 	 */
 	public function actionRoleList() {
 		// if(!Yii::app()->user->checkAccess('createPost1')){
-		// }
-		$criteria = new CDbCriteria;
-		$criteria -> limit = empty($_REQUEST['limit']) ? 10 : $_REQUEST['limit'];
-		$criteria -> offset = empty($_REQUEST['start']) ? 0 : $_REQUEST['start'];
-		$criteria -> condition = "type=" . CAuthItem::TYPE_ROLE;
-		$model = AuthItem::model() -> findAllByAttributes(array(), $criteria);
+		// }
+		$query = new Query();
+		$params = Yii::$app->request->get();
+		$query -> limit = Yii::$app->request->get('limit'); 
+		$query -> offset = Yii::$app->request->get('start'); 
+		
+		$auth = Yii::$app->authManager;
+		$model = $auth->getRoles($query);
 		$data = array();
 		foreach ($model as $key => $value) {
-			$array = array('roleName' => $value['name'], 'roleDescription' => empty($value['description']) ? null : $value['description'], 'roleBizRule' => empty($value['bizrule']) ? null : $value['bizrule'], 'roleData' => empty($value['data']) ? null : $value['data']);
+			$value =  get_object_vars($value);
+			$array = array(
+                'roleName' => $value['name'],
+                'roleDescription' => empty($value['description']) ? null : $value['description'],
+                'roleBizRule' => empty($value['ruleName']) ? null : $value['ruleName'],
+                'roleData' => empty($value['data']) ? null : $value['data']
+            );
 			array_push($data, $array);
 		}
 
@@ -202,9 +215,7 @@ class PrivilegesController extends Controller {
 		$res -> success = true;
 		$res -> message = "Loaded data";
 		$res -> data = $data;
-		$countCriteria = new CDbCriteria;
-		$countCriteria -> condition = "type=" . CAuthItem::TYPE_ROLE;
-		$res -> totalCount = AuthItem::model() -> count($countCriteria);
+		$res -> totalCount =  count($auth->getRoles());
 		echo $res -> to_json();
 	}
 
@@ -275,7 +286,10 @@ class PrivilegesController extends Controller {
 	/*
 	 * 修改任务
 	 * */
-	public function actionTaskUpdate() {
+    /**
+     *
+     */
+    public function actionTaskUpdate() {
 		$request = new Request( array('restful' => false));
 		if (is_object($request -> params)) {
 			$params = get_object_vars($request -> params);
@@ -399,17 +413,20 @@ class PrivilegesController extends Controller {
 			$result = $auth -> createOperation($params['operationName'], $params['operationDescription'], $params['operationBizRule'], $params['operationData']);
 			$success = true;
 			$message = '该操作添加成功';
-			$data = array();
+			$data = array();
+
 		} catch(Exception $e) {
 			$success = false;
 			$message = '该操作已经存在,添加失败';
-			$data = array();
+			$data = array();
+
 		}
 		$res = new Response();
 		$res -> success = $success;
 		$res -> message = $message;
 		$res -> data = $data;
-		echo $res -> to_json();	}
+		echo $res -> to_json();
+	}
 
 	/**
 	 * 修改操作
@@ -589,7 +606,8 @@ class PrivilegesController extends Controller {
 		$items = Yii::app() -> db -> createCommand() -> select('a.name as roleName, a.description as roleDescription, c.*') -> from('AuthItem a') -> join('AuthItemChild b', 'a.name = b.parent') -> join('AuthItem c', 'c.name = b.child') -> where('a.type = 2') -> queryAll();
 		$data = array();
 		foreach ($items as $key => $value) {
-			$array = array('roleName' => $value['roleName'], 'roleType' => '角色', 'roleDescription' => $value['roleDescription'], 'assignName' => $value['name'], 'assignType' => $value['type'], 'assignDescription' => empty($value['description']) ? null : $value['description'], 'assignBizRule' => empty($value['bizrule']) ? null : $value['bizrule'], 'assignData' => empty($value['data']) ? null : $value['data'], );			array_push($data, $array);
+			$array = array('roleName' => $value['roleName'], 'roleType' => '角色', 'roleDescription' => $value['roleDescription'], 'assignName' => $value['name'], 'assignType' => $value['type'], 'assignDescription' => empty($value['description']) ? null : $value['description'], 'assignBizRule' => empty($value['bizrule']) ? null : $value['bizrule'], 'assignData' => empty($value['data']) ? null : $value['data'], );
+			array_push($data, $array);
 		}
 
 		$res = new Response();
