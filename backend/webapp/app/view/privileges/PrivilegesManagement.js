@@ -3,34 +3,23 @@ Ext.define('SauceApp.view.privileges.PrivilegesManagement', {
 	
 	xtype : 'privileges-management',
     region : 'center',
+    layout : 'fit',
 	items : [{
-        title: '角色',
+        title: '角色管理',
         items: [{
-        	xtype : 'RoleList'
+        	xtype : 'RoleList',
+        	autoWidth : true,
+			autoHeight : true
         }]
     },{
-        title: '任务',
+        title: '权限管理',
         items: [{
-        	//xtype : 'TaskList'
-        	xtype : 'panel'
+        	xtype : 'PermissionList'
         }]
     },{
-        title: '操作',
+        title: '权限分配',
         items: [{
-        	//xtype : 'OperationList'
-        	xtype : 'panel'
-        }]
-    },{
-        title: '角色权限分配',
-        items: [{
-        	//xtype : 'RoleAssignList'
-        	xtype : 'panel'
-        }]
-    },{
-        title: '任务权限分配',
-        items: [{
-        //	xtype : 'TaskAssignList'
-        		xtype : 'panel'
+        	xtype : 'RoleAssignList'
         }]
     }],
 	initComponent : function() {

@@ -184,7 +184,7 @@ class PrivilegesController extends Controller {
 	}
 
 	/**
-	 * 获取角色列表
+	 * get role list
 	 *
 	 * @return role list
 	 * @author lion 
@@ -193,7 +193,6 @@ class PrivilegesController extends Controller {
 		// if(!Yii::app()->user->checkAccess('createPost1')){
 		// }
 		$query = new Query();
-		$params = Yii::$app->request->get();
 		$query -> limit = Yii::$app->request->get('limit'); 
 		$query -> offset = Yii::$app->request->get('start'); 
 		
@@ -368,17 +367,28 @@ class PrivilegesController extends Controller {
 	}
 
 	/**
-	 * 获取任务列表
+	 * get Permission list
+	 *
+	 * @return json
+	 * @author lion
 	 */
-	public function actionTaskList() {
-		$criteria = new CDbCriteria;
-		$criteria -> limit = empty($_REQUEST['limit']) ? 10 : $_REQUEST['limit'];
-		$criteria -> offset = empty($_REQUEST['start']) ? 0 : $_REQUEST['start'];
-		$criteria -> condition = "type=" . CAuthItem::TYPE_TASK;
-		$model = AuthItem::model() -> findAll($criteria);
+	public function actionPermissionList() {
+		$query = new Query();
+		$query -> limit = Yii::$app->request->get('limit'); 
+		$query -> offset = Yii::$app->request->get('start'); 
+		
+		$auth = Yii::$app->authManager;
+		$model = $auth->getPermissions($query);
+		
 		$data = array();
 		foreach ($model as $key => $value) {
-			$array = array('taskName' => $value['name'], 'taskDescription' => empty($value['description']) ? null : $value['description'], 'taskBizRule' => empty($value['bizrule']) ? null : $value['bizrule'], 'taskData' => empty($value['data']) ? null : $value['data']);
+			$value =  get_object_vars($value);
+			$array = array(
+                'PermissionName' => $value['name'],
+                'PermissionDescription' => empty($value['description']) ? null : $value['description'],
+                'PermissionBizRule' => empty($value['ruleName']) ? null : $value['ruleName'],
+                'PermissionData' => empty($value['data']) ? null : $value['data']
+            );
 			array_push($data, $array);
 		}
 
@@ -386,153 +396,14 @@ class PrivilegesController extends Controller {
 		$res -> success = true;
 		$res -> message = "Loaded data";
 		$res -> data = $data;
-		$countCriteria = new CDbCriteria;
-		$countCriteria -> condition = "type=" . CAuthItem::TYPE_TASK;
-		$res -> totalCount = AuthItem::model() -> count($countCriteria);
+		$res -> totalCount =  count($auth->getPermissions());
 		echo $res -> to_json();
 	}
 
 	/*****任务****/
 
 	/*****操作*****/
-	/*
-	 * 创建操作
-	 * */
-	public function actionOperationCreate() {
-		$request = new Request( array('restful' => false));
-		if (is_object($request -> params)) {
-			$params = get_object_vars($request -> params);
-		} else {
-			$params = $request -> params;
-		}
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-		$auth = Yii::app() -> authManager;
-		try {
-			$result = $auth -> createOperation($params['operationName'], $params['operationDescription'], $params['operationBizRule'], $params['operationData']);
-			$success = true;
-			$message = '该操作添加成功';
-			$data = array();
-
-		} catch(Exception $e) {
-			$success = false;
-			$message = '该操作已经存在,添加失败';
-			$data = array();
-
-		}
-		$res = new Response();
-		$res -> success = $success;
-		$res -> message = $message;
-		$res -> data = $data;
-		echo $res -> to_json();
-	}
-
-	/**
-	 * 修改操作
-	 */
-	public function actionOperationUpdate() {
-		$request = new Request( array('restful' => false));
-		if (is_object($request -> params)) {
-			$params = get_object_vars($request -> params);
-		} else {
-			$params = $request -> params;
-		}
-
-		$model = $this -> loadModel($params['operationName']);
-		if (!$model) {
-			$success = fasle;
-			$message = '修改操作不存在';
-		} else {
-			// Uncomment the following line if AJAX validation is needed
-			// $this->performAjaxValidation($model);
-			$attributesAarry = array();
-			foreach ($params as $key => $value) {
-				if ($key == 'operationDescription') {
-					$array = array('description' => $value);
-				}
-
-				if ($key == 'operationData') {
-					$array = array('data' => $value);
-				}
-
-				if ($key == 'operationBizRule') {
-					$array = array('bizrule' => $value);
-				}
-				$model -> attributes = $array;
-			}
-			$model -> attributes = $attributesAarry;
-			if ($model -> save()) {
-				$success = true;
-				$message = '修改操作成功';
-			} else {
-				$success = false;
-				$message = '修改操作失败';
-			}
-		}
-
-		$res = new Response();
-		$res -> success = $success;
-		$res -> message = $message;
-		$res -> data = array();
-		echo $res -> to_json();
-	}
-
-	/**
-	 * 删除操作
-	 */
-	public function actionOperationDelete() {
-		$request = new Request( array('restful' => false));
-		if (is_object($request -> params)) {
-			$params = get_object_vars($request -> params);
-		} else {
-			$params = $request -> params;
-		}
-		$model = $this -> loadModel($params['operationName']);
-		if ($model) {
-			$success = $model -> delete();
-			if ($success) {
-				$message = '删除操作成功';
-			} else {
-				$message = '删除操作失败';
-			}
-		} else {
-			$success = false;
-			$message = '操作不存在,删除失败';
-		}
-
-		$data = array();
-		$res = new Response();
-		$res -> success = $success;
-		$res -> message = $message;
-		$res -> data = $data;
-		echo $res -> to_json();
-	}
-
-	/**
-	 * 获取操作列表
-	 */
-	public function actionOperationList() {
-		$criteria = new CDbCriteria;
-		$criteria -> limit = empty($_REQUEST['limit']) ? 10 : $_REQUEST['limit'];
-		$criteria -> offset = empty($_REQUEST['start']) ? 0 : $_REQUEST['start'];
-		$criteria -> condition = "type=" . CAuthItem::TYPE_OPERATION;
-		$model = AuthItem::model() -> findAllByAttributes(array(), $criteria);
-		$data = array();
-		foreach ($model as $key => $value) {
-			$array = array('operationName' => $value['name'], 'operationDescription' => empty($value['description']) ? null : $value['description'], 'operationBizRule' => empty($value['bizrule']) ? null : $value['bizrule'], 'operationData' => empty($value['data']) ? null : $value['data']);
-			array_push($data, $array);
-		}
-
-		$res = new Response();
-		$res -> success = true;
-		$res -> message = "Loaded data";
-		$res -> data = $data;
-		$countCriteria = new CDbCriteria;
-		$countCriteria -> condition = "type=" . CAuthItem::TYPE_OPERATION;
-		$res -> totalCount = AuthItem::model() -> count($countCriteria);
-		echo $res -> to_json();
-	}
+	
 
 	/**
 	 * 给角色分配任务
@@ -677,7 +548,6 @@ class PrivilegesController extends Controller {
 		$res -> data = $data;
 		echo $res -> to_json();
 	}
-
 	
 	/***/
 	/**

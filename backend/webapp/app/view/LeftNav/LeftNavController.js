@@ -29,7 +29,6 @@ Ext.define('SauceApp.view.LeftNav.LeftNavController', {
 					        var controller = Ext.create('SauceApp.controller.PrivilegeController');  
 					         // launch init() method
 					        controller.init();   
-					        
 					        tab = tabPanel.add({
 								id : selectedItem.data.id,
 								title : selectedItem.data.text,
@@ -47,7 +46,26 @@ Ext.define('SauceApp.view.LeftNav.LeftNavController', {
 							tabPanel.setActiveTab(tab);
 					    }
 					);
+				}else{
+					
+					 tab = tabPanel.add({
+						id : selectedItem.data.id,
+						title : selectedItem.data.text,
+						closable : true,
+						autoWidth : true,
+						autoHeight : true,
+						active : true,// 为了兼容IE9
+						layout : 'fit',
+						border : false,
+						items : [{
+							xtype: 'privileges-management'
+						}]
+					});
+					// 将tab设置为当前可见可操作tab
+					tabPanel.setActiveTab(tab);
 				}
+			}else{
+				alert('ok222');
 			}
 		}
 		// 将tab设置为当前可见可操作tab

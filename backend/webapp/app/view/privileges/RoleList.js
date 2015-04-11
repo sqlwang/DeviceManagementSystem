@@ -53,7 +53,8 @@ Ext.define('SauceApp.view.privileges.RoleList', {
 		this.bbar = new Ext.PagingToolbar({
 			store : this.store,
 			displayInfo : true,
-			pageSize : 10
+			dock : 'bottom',
+			pageSize : 15
 		});
 		this.callParent(arguments);
 		this.store.load();

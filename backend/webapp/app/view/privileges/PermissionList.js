@@ -1,48 +1,51 @@
-Ext.define('SauceApp.view.Admin.Privileges.TaskList', {
+Ext.define('SauceApp.view.privileges.PermissionList', {
 	extend : 'Ext.grid.Panel',
-	alias : 'widget.TaskList',
+	alias : 'widget.PermissionList',
 	loadMask: true,
-	id: 'adminTaskList',
-	store: 'Admin.TaskStore',
+	id: 'adminPermissionList',
+	store: 'privileges.PermissionStore',
 	initComponent : function() {
+		if (Ext.isString(this.store)) {
+			this.store = Ext.create('SauceApp.store.privileges.PermissionStore');
+		}
 		this.dockedItems = [{
 			xtype : 'toolbar',
 			//dock: 'bottom',
 			items : [{
-				iconCls: 'icon-task-add',
+				iconCls: 'icon-Permission-add',
 				text : '添加任务',
 				scope : this,
-				action : 'addTask'
+				action : 'addPermission'
 			}, {
-				iconCls : 'icon-task-edit',
+				iconCls : 'icon-Permission-edit',
 				text : '修改任务',
 				scope : this,
-				action : 'editTask'
+				action : 'editPermission'
 			},{
-				iconCls: 'icon-task-delete',
+				iconCls: 'icon-Permission-delete',
 				text : '删除任务',
-				id: 'adminTaskDel',
+				id: 'adminPermissionDel',
 				disabled : true,
-				action : 'delTask',
+				action : 'delPermission',
 				scope : this
 			}]
 		}];	
 			
 		this.columns = [{
 			header : '任务名称',
-			dataIndex : 'taskName',
+			dataIndex : 'PermissionName',
 			flex : 1
 		},{
 			header : '业务规则',
-			dataIndex : 'taskBizRule',
+			dataIndex : 'PermissionBizRule',
 			flex : 1
 		},{
 			header : '数据字典',
-			dataIndex : 'taskData',
+			dataIndex : 'PermissionData',
 			flex : 1
 		},{
 			header : '描述',
-			dataIndex : 'taskDescription',
+			dataIndex : 'PermissionDescription',
 			flex : 1
 		}];
 
@@ -52,5 +55,6 @@ Ext.define('SauceApp.view.Admin.Privileges.TaskList', {
 			pageSize : 10
 		});
 		this.callParent();
+		this.store.load();
 	}
 }); 
