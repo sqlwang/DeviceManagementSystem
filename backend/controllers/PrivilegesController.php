@@ -473,11 +473,34 @@ class PrivilegesController extends Controller {
 	/**
 	 * 获取权限分配操作列表
 	 */
-	public function actionAssignRoleList() {
-		$items = Yii::app() -> db -> createCommand() -> select('a.name as roleName, a.description as roleDescription, c.*') -> from('AuthItem a') -> join('AuthItemChild b', 'a.name = b.parent') -> join('AuthItem c', 'c.name = b.child') -> where('a.type = 2') -> queryAll();
+	public function actionAssignList() {
+		
+		// var data = [
+		    // {projectId: 100, project: '管理员', 
+		    // taskId: 112, description: '权限管理', estimate: 6, rate: 150, due:'06/24/2007'},
+		    // {projectId: 100, project: '管理员', taskId: 113, description: '设备管理', estimate: 4, rate: 150, due:'06/25/2007'},
+		    // {projectId: 100, project: '管理员', taskId: 114, description: '用户管理', estimate: 4, rate: 150, due:'06/27/2007'},
+		    // {projectId: 100, project: '管理员', taskId: 115, description: '系统日志', estimate: 8, rate: 0, due:'06/29/2007'}
+		// ];
+		
+		$auth = Yii::$app->authManager;
+		$model = $auth->getRoles();
 		$data = array();
-		foreach ($items as $key => $value) {
-			$array = array('roleName' => $value['roleName'], 'roleType' => '角色', 'roleDescription' => $value['roleDescription'], 'assignName' => $value['name'], 'assignType' => $value['type'], 'assignDescription' => empty($value['description']) ? null : $value['description'], 'assignBizRule' => empty($value['bizrule']) ? null : $value['bizrule'], 'assignData' => empty($value['data']) ? null : $value['data'], );
+		foreach ($model as $key => $value) {
+			$value =  get_object_vars($value);
+			//通过角色获取权限
+			$permission =  $auth->getPermissionsByRole($value['name']);
+			foreach($permission as $p_key => $p_value){
+				$p_array =  get_object_vars($p_value);
+				$array = array(
+	                'roleName' => $value['name'],
+	                'roleDescription' => empty($value['description']) ? null : $value['description'],
+	                'permissionDescription' => empty($p_array['description']) ? null : $p_array['description'],
+	                'permission' => empty($p_array['name']) ? null : $p_array['name'],
+	                'data' => empty($p_array['data']) ? null : $p_array['data'],
+	                'rule' => empty($p_array['rule_name']) ? null : $p_array['rule_name']
+	            );
+			}
 			array_push($data, $array);
 		}
 
@@ -485,10 +508,9 @@ class PrivilegesController extends Controller {
 		$res -> success = true;
 		$res -> message = "Loaded data";
 		$res -> data = $data;
-		$countCriteria = new CDbCriteria;
-		$countCriteria -> condition = "type=" . CAuthItem::TYPE_OPERATION;
-		$res -> totalCount = AuthItem::model() -> count($countCriteria);
+		$res -> totalCount = 0;
 		echo $res -> to_json();
+		
 	}
 
 	/**

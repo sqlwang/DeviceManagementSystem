@@ -2,7 +2,7 @@ Ext.define('SauceApp.view.privileges.PermissionList', {
 	extend : 'Ext.grid.Panel',
 	alias : 'widget.PermissionList',
 	loadMask: true,
-	id: 'adminPermissionList',
+	
 	store: 'privileges.PermissionStore',
 	initComponent : function() {
 		if (Ext.isString(this.store)) {
@@ -13,17 +13,17 @@ Ext.define('SauceApp.view.privileges.PermissionList', {
 			//dock: 'bottom',
 			items : [{
 				iconCls: 'icon-Permission-add',
-				text : '添加任务',
+				text : '添加权限',
 				scope : this,
 				action : 'addPermission'
 			}, {
 				iconCls : 'icon-Permission-edit',
-				text : '修改任务',
+				text : '修改权限',
 				scope : this,
 				action : 'editPermission'
 			},{
 				iconCls: 'icon-Permission-delete',
-				text : '删除任务',
+				text : '删除权限',
 				id: 'adminPermissionDel',
 				disabled : true,
 				action : 'delPermission',

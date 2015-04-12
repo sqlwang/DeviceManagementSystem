@@ -19,7 +19,7 @@ Ext.define('SauceApp.view.privileges.PrivilegesManagement', {
     },{
         title: '权限分配',
         items: [{
-        	xtype : 'RoleAssignList'
+        	xtype : 'assign-list'
         }]
     }],
 	initComponent : function() {
