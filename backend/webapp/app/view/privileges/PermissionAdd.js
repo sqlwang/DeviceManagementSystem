@@ -3,7 +3,7 @@ Ext.define('SauceApp.view.privileges.PermissionAdd', {
 	
 	xtype: 'permission-add',
 	autoShow : true,
-	title : '添加任务',
+	title : '添加权限',
 	closable : true,
 	closeAction : 'destory',
 	width : 400,
@@ -15,31 +15,35 @@ Ext.define('SauceApp.view.privileges.PermissionAdd', {
 		
 		this.items = [{
 			xtype : 'form',
-			//frame : true,
 			bodyPadding : 0,
 			waitMsgTarget : true,
 			fieldDefaults : {
 				labelAlign : 'right',
 				labelWidth : 85,
-				msgTarget : 'side'
+				msgTarget : 'side',
+				width: 320
 			},
 			defaultType : 'textfield',
 			padding: '10 0 0 10',
 			items : [{
-				fieldLabel : '任务名称',
-				name : 'taskName'
-			}, 
+				name : '_csrf',
+				hidden: true
+			},{
+				fieldLabel : '权限描述',
+				name : 'PermissionDescription'
+			},{
+				fieldLabel : '权限名称',
+				name : 'PermissionName'
+			},{
+				fieldLabel : '父级权限',
+				name : 'ParentPermissionName'
+			}, {
+				fieldLabel : '导航栏排序',
+				name : 'sort'
+			},
 			{
-				fieldLabel : '业务规则',
-				name : 'taskBizRule'
-			}, 
-			{
-				fieldLabel : '业务数据',
-				name : 'taskData'
-			}, 
-			{
-				fieldLabel : '描述',
-				name : 'taskDescription'
+				fieldLabel : 'ExtJS类名称',
+				name : 'ExtJSClass'
 			}]
 		}];
 

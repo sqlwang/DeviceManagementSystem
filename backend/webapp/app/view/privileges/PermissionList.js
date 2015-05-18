@@ -30,22 +30,26 @@ Ext.define('SauceApp.view.privileges.PermissionList', {
 				scope : this
 			}]
 		}];	
-			
+		
 		this.columns = [{
-			header : '任务名称',
+			header : '权限描述',
+			dataIndex : 'PermissionDescription',
+			flex : 1
+		},{
+			header : '权限名称',
 			dataIndex : 'PermissionName',
 			flex : 1
 		},{
-			header : '业务规则',
-			dataIndex : 'PermissionBizRule',
+			header : '导航栏排序',
+			dataIndex : 'sort',
 			flex : 1
 		},{
-			header : '数据字典',
-			dataIndex : 'PermissionData',
+			header : 'ExtJS类名',
+			dataIndex : 'ExtJSClass',
 			flex : 1
 		},{
-			header : '描述',
-			dataIndex : 'PermissionDescription',
+			header : '父级权限名称',
+			dataIndex : 'ParentPermissionName',
 			flex : 1
 		}];
 

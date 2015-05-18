@@ -45,26 +45,22 @@ Ext.define('SauceApp.view.privileges.RoleAssignList', {
             sortable: true,
             dataIndex: 'permissionDescription',
             hideable: false
-        }, {
+        },{
             header: '权限代码',
             width: 130,
             dataIndex: 'permission'
         }, {
             header: 'JS类名',
             width: 130,
-            dataIndex: 'permission'
+            dataIndex: 'ExtJSClass'
         }, {
             header: '排序',
             width: 130,
-            dataIndex: 'data'
+            dataIndex: 'sort'
         }, {
             header: '规则',
             width: 130,
             dataIndex: 'rule'
-        }, {
-            header: '描述',
-            width: 130,
-            dataIndex: 'data'
         }];
 		this.callParent(arguments);
 		me.store.load(); 

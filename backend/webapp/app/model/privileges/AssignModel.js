@@ -5,7 +5,8 @@ Ext.define('SauceApp.model.privileges.AssignModel', {
 		{name: 'roleDescription', type: 'string'},
 		{name: 'permissionDescription', type: 'string'},
 		{name: 'permission', type: 'string'},
-		{name: 'data', type: 'string'},
+		{name: 'ExtJSClass', type: 'string'},
+		{name: 'sort', type: 'string'},
 		{name: 'rule', type: 'string'}
 	],
 	idProperty: 'roleName'

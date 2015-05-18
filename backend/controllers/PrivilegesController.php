@@ -4,8 +4,7 @@ namespace backend\controllers;
 use Yii;
 use common\lib\Response;
 
-use yii\base\Request;
-
+use yii\web\Request;
 use yii\web\Session;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -14,14 +13,6 @@ use yii\filters\AccessControl;
 use yii\db\Query;
 
 class PrivilegesController extends Controller {
-	/**
-	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-	 * using two-column layout. See 'protected/views/layouts/column2.php'.
-	 */
-	private $roleType = 2;
-	private $taskType = 1;
-	private $operationType = 0;
-
 	/***/
 	/**
 	 * 获取导航栏功能列表
@@ -250,121 +241,6 @@ class PrivilegesController extends Controller {
 		echo $res -> to_json();
 	}
 
-	/**
-	 * 任务创建
-	 */
-	public function actionTaskCreate() {
-		$request = new Request( array('restful' => false));
-		if (is_object($request -> params)) {
-			$params = get_object_vars($request -> params);
-		} else {
-			$params = $request -> params;
-		}
-
-		$auth = Yii::app() -> authManager;
-		try {
-			$result = $auth -> createTask($params['taskName'], $params['taskDescription'], $params['taskBizRule'], $params['taskData']);
-			if (trim($params['parentTaskName']) != "") {//如果不是根级任务则添加数据到 认证项父子关系表（AuthItemChild）
-				$result = $auth -> addItemChild($params['parentTaskName'], $params['taskName']);
-			}
-			$success = true;
-			$message = '该任务添加成功';
-			$data = array();
-		} catch(Exception $e) {
-			$success = false;
-			$message = '该任务已经存在,添加失败';
-			$data = array();
-		}
-		$res = new Response();
-		$res -> success = $success;
-		$res -> message = $message;
-		$res -> data = $data;
-		echo $res -> to_json();
-	}
-
-	/*
-	 * 修改任务
-	 * */
-    /**
-     *
-     */
-    public function actionTaskUpdate() {
-		$request = new Request( array('restful' => false));
-		if (is_object($request -> params)) {
-			$params = get_object_vars($request -> params);
-		} else {
-			$params = $request -> params;
-		}
-
-		$model = $this -> loadModel($params['taskName']);
-		if (!$model) {
-			$success = fasle;
-			$message = '修改角色不存在';
-		} else {
-			// Uncomment the following line if AJAX validation is needed
-			// $this->performAjaxValidation($model);
-			$attributesAarry = array();
-			foreach ($params as $key => $value) {
-				if ($key == 'taskDescription') {
-					$array = array('description' => $value);
-				}
-
-				if ($key == 'taskData') {
-					$array = array('data' => $value);
-				}
-
-				if ($key == 'taskBizRule') {
-					$array = array('bizrule' => $value);
-				}
-				$model -> attributes = $array;
-			}
-			$model -> attributes = $attributesAarry;
-			if ($model -> save()) {
-				$success = true;
-				$message = '修改任务成功';
-			} else {
-				$success = false;
-				$message = '修改任务失败';
-			}
-		}
-
-		$res = new Response();
-		$res -> success = $success;
-		$res -> message = $message;
-		$res -> data = array();
-		echo $res -> to_json();
-	}
-
-	/**
-	 * 删除任务
-	 */
-	public function actionTaskDelete() {
-		$request = new Request( array('restful' => false));
-		if (is_object($request -> params)) {
-			$params = get_object_vars($request -> params);
-		} else {
-			$params = $request -> params;
-		}
-		$model = $this -> loadModel($params['taskName']);
-		if ($model) {
-			$success = $model -> delete();
-			if ($success) {
-				$message = '删除任务成功';
-			} else {
-				$message = '删除任务失败';
-			}
-		} else {
-			$success = false;
-			$message = '任务不存在，删除失败';
-		}
-
-		$data = array();
-		$res = new Response();
-		$res -> success = $success;
-		$res -> message = $message;
-		$res -> data = $data;
-		echo $res -> to_json();
-	}
 
 	/**
 	 * get Permission list
@@ -383,12 +259,23 @@ class PrivilegesController extends Controller {
 		$data = array();
 		foreach ($model as $key => $value) {
 			$value =  get_object_vars($value);
+			
+			if (!empty($value['data'])) {
+				$r_data = json_decode($value['data']);
+				if(is_object($r_data)){
+					$r_data = get_object_vars($r_data);
+				}
+			} else {
+				$r_data = $value['data'];
+			}
 			$array = array(
                 'PermissionName' => $value['name'],
                 'PermissionDescription' => empty($value['description']) ? null : $value['description'],
                 'PermissionBizRule' => empty($value['ruleName']) ? null : $value['ruleName'],
-                'PermissionData' => empty($value['data']) ? null : $value['data']
-            );
+                'PermissionData' => empty($value['data']) ? null : $value['data'],
+                'sort' => empty($r_data['sort']) ? null : $r_data['sort'],
+				'ExtJSClass' => empty($r_data['ExtJSClass']) ? null : $r_data['ExtJSClass']
+			);
 			array_push($data, $array);
 		}
 
@@ -398,6 +285,33 @@ class PrivilegesController extends Controller {
 		$res -> data = $data;
 		$res -> totalCount =  count($auth->getPermissions());
 		echo $res -> to_json();
+	}
+
+	/**
+	 * create permission
+	 *
+	 * @return void
+	 * @author  
+	 */
+	public function actionPermissionCreate() {
+		$params = Yii::$app->request->post(); 
+		$auth = Yii::$app->authManager;
+		//ParentPermissionName
+		$permission = $auth->createPermission($params['data']['PermissionName']);
+        $permission->description = $params['data']['PermissionDescription'];
+		$permission->data = json_encode(array(
+			'ExtJSClass' => $params['data']['ExtJSClass'],
+			'sort' =>$params['data']['sort']
+		));
+		$res = new Response();
+        if($auth->add($permission)){
+        	$res -> success = true;
+			$res -> message = "添加权限成功";
+        }else{
+        	$res -> success = false;
+			$res -> message = "添加权限失败";
+        }	
+		echo $res -> to_json();	
 	}
 
 	/*****任务****/
@@ -492,13 +406,24 @@ class PrivilegesController extends Controller {
 			$permission =  $auth->getPermissionsByRole($value['name']);
 			foreach($permission as $p_key => $p_value){
 				$p_array =  get_object_vars($p_value);
+				
+				if (!empty($p_array['data'])) {
+				$r_data = json_decode($p_array['data']);
+					if(is_object($r_data)){
+						$r_data = get_object_vars($r_data);
+					}
+				} else {
+					$r_data = $p_array['data'];
+				}
+			
 				$array = array(
 	                'roleName' => $value['name'],
 	                'roleDescription' => empty($value['description']) ? null : $value['description'],
 	                'permissionDescription' => empty($p_array['description']) ? null : $p_array['description'],
 	                'permission' => empty($p_array['name']) ? null : $p_array['name'],
-	                'data' => empty($p_array['data']) ? null : $p_array['data'],
-	                'rule' => empty($p_array['rule_name']) ? null : $p_array['rule_name']
+	                'rule' => empty($p_array['rule_name']) ? null : $p_array['rule_name'],
+                	'sort' => empty($r_data['sort']) ? null : $r_data['sort'],
+					'ExtJSClass' => empty($r_data['ExtJSClass']) ? null : $r_data['ExtJSClass']
 	            );
 			}
 			array_push($data, $array);
