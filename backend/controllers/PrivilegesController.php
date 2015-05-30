@@ -257,26 +257,42 @@ class PrivilegesController extends Controller {
 		$model = $auth->getPermissions($query);
 		
 		$data = array();
+		
+		// var data = [
+		    // {projectId: 100, project: '管理员', 
+		    // taskId: 112, description: '权限管理', estimate: 6, rate: 150, due:'06/24/2007'},
+		    // {projectId: 100, project: '管理员', taskId: 113, description: '设备管理', estimate: 4, rate: 150, due:'06/25/2007'},
+		    // {projectId: 100, project: '管理员', taskId: 114, description: '用户管理', estimate: 4, rate: 150, due:'06/27/2007'},
+		    // {projectId: 100, project: '管理员', taskId: 115, description: '系统日志', estimate: 8, rate: 0, due:'06/29/2007'}
+		// ];
+		
 		foreach ($model as $key => $value) {
 			$value =  get_object_vars($value);
-			
-			if (!empty($value['data'])) {
-				$r_data = json_decode($value['data']);
-				if(is_object($r_data)){
-					$r_data = get_object_vars($r_data);
+			//判断是否有下一级权限
+			$permission =  $auth->getChildren($value['name']);
+			foreach($permission as $p_key => $p_value){
+				$p_array =  get_object_vars($p_value);
+				
+				if (!empty($p_array['data'])) {
+				$r_data = json_decode($p_array['data']);
+					if(is_object($r_data)){
+						$r_data = get_object_vars($r_data);
+					}
+				} else {
+					$r_data = $p_array['data'];
 				}
-			} else {
-				$r_data = $value['data'];
+			
+				$array = array(
+	                'ParentPermissionName' => $value['name'],
+	                'ParentPermissionDescription' => empty($value['description']) ? null : $value['description'],
+	                'PermissionDescription' => empty($p_array['description']) ? null : $p_array['description'],
+	                'Permission' => empty($p_array['name']) ? null : $p_array['name'],
+	                'rule' => empty($p_array['rule_name']) ? null : $p_array['rule_name'],
+                	'sort' => empty($r_data['sort']) ? null : $r_data['sort'],
+					'ExtJSClass' => empty($r_data['ExtJSClass']) ? null : $r_data['ExtJSClass']
+	            );
+				array_push($data, $array);
 			}
-			$array = array(
-                'PermissionName' => $value['name'],
-                'PermissionDescription' => empty($value['description']) ? null : $value['description'],
-                'PermissionBizRule' => empty($value['ruleName']) ? null : $value['ruleName'],
-                'PermissionData' => empty($value['data']) ? null : $value['data'],
-                'sort' => empty($r_data['sort']) ? null : $r_data['sort'],
-				'ExtJSClass' => empty($r_data['ExtJSClass']) ? null : $r_data['ExtJSClass']
-			);
-			array_push($data, $array);
 		}
 
 		$res = new Response();
@@ -296,20 +312,71 @@ class PrivilegesController extends Controller {
 	public function actionPermissionCreate() {
 		$params = Yii::$app->request->post(); 
 		$auth = Yii::$app->authManager;
-		//ParentPermissionName
-		$permission = $auth->createPermission($params['data']['PermissionName']);
-        $permission->description = $params['data']['PermissionDescription'];
+		$PermissionName = empty($params['data']['PermissionName']) ? '' : $params['data']['PermissionName'];
+		$PermissionDescription = empty($params['data']['PermissionDescription']) ? $PermissionName : $params['data']['PermissionDescription'];
+		$res = new Response();
+		
+		if(empty($PermissionName)){
+			$res -> success = false;
+			$res -> message = "请输入权限名称,添加失败";
+			echo $res -> to_json();	
+		}
+		
+		if(!empty($auth->getPermission($PermissionName))){
+			$res -> success = false;
+			$res -> message = "该权限已经存在,添加失败";
+			echo $res -> to_json();	
+		}
+		$permission = $auth->createPermission($PermissionName);
+        $permission->description = $PermissionDescription;
 		$permission->data = json_encode(array(
 			'ExtJSClass' => $params['data']['ExtJSClass'],
 			'sort' =>$params['data']['sort']
 		));
-		$res = new Response();
+		//add  permission
         if($auth->add($permission)){
+        	//判断父级权限是否存在
+        	if (!empty($params['data']['ParentPermissionName'])) {
+				if($auth->getPermission($params['data']['ParentPermissionName'])){
+					$ParentPermissionName =  $auth->getPermission($params['data']['ParentPermissionName']);
+					if(!$auth->addChild( $ParentPermissionName, $permission )){
+						$res -> success = false;
+						$res -> message = "父级权限不存在,添加失败";
+						echo $res -> to_json();	
+					}
+				}else{
+					$res -> success = false;
+					$res -> message = "父级权限不存在,添加失败";
+					echo $res -> to_json();	
+				}
+			}
         	$res -> success = true;
 			$res -> message = "添加权限成功";
         }else{
         	$res -> success = false;
 			$res -> message = "添加权限失败";
+        }	
+		echo $res -> to_json();	
+	}
+
+	/**
+	 * delete permission
+	 *
+	 * @return void
+	 * @author  
+	 */
+	public function actionPermissionDelete() {
+		$params = Yii::$app->request->post(); 
+		$auth = Yii::$app->authManager;
+		//ParentPermissionName
+		$permission =  $auth->getPermission($params['data']['PermissionName']);
+		$res = new Response();
+        if($auth->remove($permission)){
+        	$res -> success = true;
+			$res -> message = "删除权限成功";
+        }else{
+        	$res -> success = false;
+			$res -> message = "删除权限失败";
         }	
 		echo $res -> to_json();	
 	}

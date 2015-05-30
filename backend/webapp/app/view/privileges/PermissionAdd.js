@@ -12,9 +12,9 @@ Ext.define('SauceApp.view.privileges.PermissionAdd', {
 	border: 0,
 	layout :  'fit',
 	initComponent : function() {
-		
 		this.items = [{
 			xtype : 'form',
+			closeAction: 'destory',
 			bodyPadding : 0,
 			waitMsgTarget : true,
 			fieldDefaults : {
@@ -30,20 +30,33 @@ Ext.define('SauceApp.view.privileges.PermissionAdd', {
 				hidden: true
 			},{
 				fieldLabel : '权限描述',
-				name : 'PermissionDescription'
+				name : 'PermissionDescription',
+				allowBlank : false
 			},{
 				fieldLabel : '权限名称',
-				name : 'PermissionName'
+				name : 'PermissionName',
+				allowBlank : false
 			},{
+				xtype: 'combo', 
 				fieldLabel : '父级权限',
-				name : 'ParentPermissionName'
+				name : 'ParentPermissionName',
+				store: 'privileges.PermissionStore',
+				mode: 'remote',     
+			    triggerAction:'all',     
+			    anchor:'100%',     
+			    editable : false,  
+			    width: 220,
+			    displayField: 'PermissionDescription',
+			    valueField: 'PermissionName'
 			}, {
 				fieldLabel : '导航栏排序',
-				name : 'sort'
+				name : 'sort',
+				allowBlank : false
 			},
 			{
 				fieldLabel : 'ExtJS类名称',
-				name : 'ExtJSClass'
+				name : 'ExtJSClass',
+				allowBlank : false
 			}]
 		}];
 
