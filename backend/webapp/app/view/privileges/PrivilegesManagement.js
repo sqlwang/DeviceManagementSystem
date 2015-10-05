@@ -14,12 +14,16 @@ Ext.define('SauceApp.view.privileges.PrivilegesManagement', {
     },{
         title: '权限管理',
         items: [{
-        	xtype : 'PermissionList'
+        	xtype : 'PermissionList',
+        	autoWidth : true,
+			autoHeight : true
         }]
     },{
         title: '权限分配',
         items: [{
-        	xtype : 'assign-list'
+        	xtype : 'assign-list',
+        	autoWidth : true,
+			autoHeight : true
         }]
     }],
 	initComponent : function() {

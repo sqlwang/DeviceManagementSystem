@@ -5,11 +5,12 @@
 Ext.define('SauceApp.view.LeftNav.NavTree', {
     extend: 'Ext.tree.Panel',
     xtype: 'NavTree',
-    title: 'Navigation',
+    title: '功能导航',
     width: 200,
     split: true,
     collapsible: true,
     rootVisible: false,
+    
     requires: [
         'SauceApp.view.LeftNav.LeftNavController'
     ],

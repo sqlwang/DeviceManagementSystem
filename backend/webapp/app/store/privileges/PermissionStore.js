@@ -1,7 +1,11 @@
 Ext.define('SauceApp.store.privileges.PermissionStore', {
-    extend: 'Ext.data.Store',
+    extend: 'Ext.data.TreeStore',
 	model: 'SauceApp.model.privileges.PermissionModel',
-
+ 	root: {
+		expanded: true
+    },
+    idProperty : 'PermissionName',
+    //nodeParam: 'PermissionName',
 	proxy : {
 		type : 'ajax',
 		api : {
@@ -10,13 +14,11 @@ Ext.define('SauceApp.store.privileges.PermissionStore', {
 			create : '../web/index.php/privileges/permission-create',
 			destroy : '../web/index.php/privileges/permission-delete'
 		},
-		reader : {
-			type : 'json',
-			rootProperty : 'data',
-			totalProperty : 'totalCount',
-			successProperty : 'success',
-			idProperty : 'PermissionName'
-		},
+		reader: {
+            type: 'json',
+            root : 'data',
+            idProperty :'PermissionName'
+          },
         writer: {
             type: 'json',
             writeAllFields: false,

@@ -1,8 +1,13 @@
 Ext.define('SauceApp.view.privileges.PermissionList', {
-	extend : 'Ext.grid.Panel',
+	extend : 'Ext.tree.Panel',
 	alias : 'widget.PermissionList',
-	loadMask: true,
 	
+	id: 'PermissionList',
+    reserveScrollbar: true,
+    loadMask: true,
+    useArrows: true,
+    rootVisible: false,
+    animate: false,
 	store: 'privileges.PermissionStore',
 	initComponent : function() {
 		if (Ext.isString(this.store)) {
@@ -19,7 +24,9 @@ Ext.define('SauceApp.view.privileges.PermissionList', {
 			}, {
 				iconCls : 'icon-Permission-edit',
 				text : '修改权限',
+				id: 'adminPermissionDdit',
 				scope : this,
+				disabled : true,
 				action : 'editPermission'
 			},{
 				iconCls: 'icon-Permission-delete',
@@ -30,25 +37,27 @@ Ext.define('SauceApp.view.privileges.PermissionList', {
 				scope : this
 			}]
 		}];	
-		
 		this.columns = [{
-			header : '权限描述',
+			xtype: 'treecolumn', //this is so we know which column will show the tree
 			dataIndex : 'PermissionDescription',
-			flex : 1
+			text: '权限描述',
+            width: 275,
+            sortable: true,
+            locked: true
 		},{
-			header : '权限名称',
+			text : '权限代码',
 			dataIndex : 'PermissionName',
 			flex : 1
 		},{
-			header : '导航栏排序',
+			text : '导航栏排序',
 			dataIndex : 'sort',
 			flex : 1
 		},{
-			header : 'ExtJS类名',
+			text : 'ExtJS类名',
 			dataIndex : 'ExtJSClass',
 			flex : 1
 		},{
-			header : '父级权限名称',
+			text : '父级权限名称',
 			dataIndex : 'ParentPermissionName',
 			flex : 1
 		}];

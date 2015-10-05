@@ -12,32 +12,83 @@ use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\db\Query;
 
+use backend\models\ItemChild;
+
 class PrivilegesController extends Controller {
 	/***/
 	/**
 	 * 获取导航栏功能列表
 	 */
 	public function actionNavList() {
-		
 		$auth = Yii::$app->authManager;
 		$user_id = Yii::$app->user->id;
-		$permissions =  $auth->getPermissionsByUser($user_id);
-		$data = array();
-		foreach ($permissions as $key => $value) {
-			$permissionsArray = get_object_vars($value);
-			
-		//	$level = empty($item_data['level']) ? 1 : $item_data['level'];
-			$is_leaf = empty($auth->getChildren( $permissionsArray['name'])) ? true :false;
-			
-			$array = array(
-				'id' => $permissionsArray['name'], 
-				'text' => $permissionsArray['description'], 
-				'leaf' => $is_leaf,
-				'level'=> 1
-			);
-			array_push($data, $array);
+		$roles =  $auth->getRolesByUser($user_id);
+		
+		foreach ($roles as $key => $value) {
+			$role_array = get_object_vars($value);
+			$permissions =  $auth->getChildren($role_array['name']);
+			$data = array();
+			foreach ($permissions as $p_key => $p_value) {
+				$permission_array = get_object_vars($p_value);
+				if (!empty($permission_array['data'])) {
+					$r_data = json_decode($permission_array['data']);
+				if(is_object($r_data)){
+					$r_data = get_object_vars($r_data);
+					}
+				} else {
+					$r_data = $permission_array['data'];
+				}
+				$array = array(
+					'id' => $permission_array['name'], 
+					'text' => $permission_array['description'], 
+					'rule' => empty($r_data['rule_name']) ? null : $r_data['rule_name'],
+		            'sort' => empty($r_data['sort']) ? null : $r_data['sort'],
+				);
+				
+				if ($auth->getChildren($permission_array['name'])) {
+					$child_array = $this->getChildrenPermission($permission_array['name']);
+					$leaf = false;
+					$array['children'] = $child_array;
+				}else{
+					$leaf = true;
+				}
+				$array['leaf'] = $leaf;
+				
+				array_push($data, $array);
+			}
 		}
 		echo json_encode($data);
+	}
+	
+	public function getChildrenPermission($name='')
+	{
+		$auth = Yii::$app->authManager;
+		$permission =  $auth->getChildren($name);
+		$data = array();
+		foreach ($permission as $key => $value) {
+			$permission_array = get_object_vars($value);
+			
+			if (!empty($permission_array['data'])) {
+				$r_data = json_decode($permission_array['data']);
+				if(is_object($r_data)){
+					$r_data = get_object_vars($r_data);
+				}
+			} else {
+				$r_data = $permission_array['data'];
+			}
+            $array = array(
+				'id' => $permission_array['name'], 
+				'text' => $permission_array['description'], 
+				'PermissionName' => $permission_array['name'], 
+				'PermissionDescription' => $permission_array['description'], 
+				'rule' => empty($r_data['rule_name']) ? null : $r_data['rule_name'],
+	            'sort' => empty($r_data['sort']) ? null : $r_data['sort'],
+				'ExtJSClass' => empty($r_data['ExtJSClass']) ? null : $r_data['ExtJSClass'],
+				'leaf' => true
+			);
+			array_push($data, $array);
+        }
+		return $data;
 	}
 	
 
@@ -254,47 +305,44 @@ class PrivilegesController extends Controller {
 		$query -> offset = Yii::$app->request->get('start'); 
 		
 		$auth = Yii::$app->authManager;
-		$model = $auth->getPermissions($query);
-		
+		$model =  $auth->getPermissions($query);
 		$data = array();
 		
-		// var data = [
-		    // {projectId: 100, project: '管理员', 
-		    // taskId: 112, description: '权限管理', estimate: 6, rate: 150, due:'06/24/2007'},
-		    // {projectId: 100, project: '管理员', taskId: 113, description: '设备管理', estimate: 4, rate: 150, due:'06/25/2007'},
-		    // {projectId: 100, project: '管理员', taskId: 114, description: '用户管理', estimate: 4, rate: 150, due:'06/27/2007'},
-		    // {projectId: 100, project: '管理员', taskId: 115, description: '系统日志', estimate: 8, rate: 0, due:'06/29/2007'}
-		// ];
-		
 		foreach ($model as $key => $value) {
-			$value =  get_object_vars($value);
-			//判断是否有下一级权限
-			$permission =  $auth->getChildren($value['name']);
-			foreach($permission as $p_key => $p_value){
-				$p_array =  get_object_vars($p_value);
-				
-				if (!empty($p_array['data'])) {
-				$r_data = json_decode($p_array['data']);
-					if(is_object($r_data)){
-						$r_data = get_object_vars($r_data);
-					}
-				} else {
-					$r_data = $p_array['data'];
+			$permission_array = get_object_vars($value);
+			if (!empty($permission_array['data'])) {
+				$r_data = json_decode($permission_array['data']);
+			if(is_object($r_data)){
+				$r_data = get_object_vars($r_data);
 				}
+			} else {
+				$r_data = $permission_array['data'];
+			}
+			$array = array(
+				'PermissionName' => $permission_array['name'], 
+				'PermissionDescription' => $permission_array['description'], 
+				'rule' => empty($permission_array['rule_name']) ? null : $permission_array['rule_name'],
+            	'sort' => empty($r_data['sort']) ? null : $r_data['sort'],
+				'ExtJSClass' => empty($r_data['ExtJSClass']) ? null : $r_data['ExtJSClass']
+			);
 			
-				$array = array(
-	                'ParentPermissionName' => $value['name'],
-	                'ParentPermissionDescription' => empty($value['description']) ? null : $value['description'],
-	                'PermissionDescription' => empty($p_array['description']) ? null : $p_array['description'],
-	                'Permission' => empty($p_array['name']) ? null : $p_array['name'],
-	                'rule' => empty($p_array['rule_name']) ? null : $p_array['rule_name'],
-                	'sort' => empty($r_data['sort']) ? null : $r_data['sort'],
-					'ExtJSClass' => empty($r_data['ExtJSClass']) ? null : $r_data['ExtJSClass']
-	            );
+			if ($auth->getChildren($permission_array['name'])) {
+				$child_array = $this->getChildrenPermission($permission_array['name']);
+				$array['children'] = $child_array;
+				$leaf = false;
+			}else{
+				$leaf = true;
+			}
+			$array['leaf'] = $leaf;
+			
+			$item = new ItemChild();
+			$is_child = $item->find()->where(array('child'=>$permission_array['name']));
+			$is_parent = $item->find()->where(array('parent'=>$permission_array['name']));
+			if (!$is_child || ($is_child&&$is_parent)) {
 				array_push($data, $array);
 			}
+			
 		}
-
 		$res = new Response();
 		$res -> success = true;
 		$res -> message = "Loaded data";
