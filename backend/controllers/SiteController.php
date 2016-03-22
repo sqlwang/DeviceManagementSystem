@@ -110,14 +110,15 @@ class SiteController extends Controller
 	{
 		$res = new Response();
 		//如果没有管理员存在，初始化管理员
-		$exist_admin = User::find()->all();
+		$res->success = false;
+       	 	$res->message = '';
+		//	$res->to_json();
+	/*	$exist_admin = User::find()->all();
 		if (empty($exist_admin)) {
 			$res->data = array(
 				'exist_admin' => false
 			);
-			$res->success = false;
-       	 	$res->message = '';
-			$res->to_json();
+			
 		}else{
 			if(Yii::$app->user->getId()){
 				$res->success = true;
@@ -134,7 +135,7 @@ class SiteController extends Controller
 					'exist_admin' => true
 				);
 			}
-		}
+		}*/
 		$res->to_json();
 	}
 	
