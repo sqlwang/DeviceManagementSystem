@@ -62,6 +62,8 @@ class CompareValidator extends Validator
      * - `>=`: check if value being validated is greater than or equal to the value being compared with.
      * - `<`: check if value being validated is less than the value being compared with.
      * - `<=`: check if value being validated is less than or equal to the value being compared with.
+     *
+     * When you want to compare numbers, make sure to also set [[type]] to `number`.
      */
     public $operator = '==';
     /**
@@ -170,8 +172,8 @@ class CompareValidator extends Validator
     protected function compareValues($operator, $type, $value, $compareValue)
     {
         if ($type === 'number') {
-            $value = floatval($value);
-            $compareValue = floatval($compareValue);
+            $value = (float) $value;
+            $compareValue = (float) $compareValue;
         } else {
             $value = (string) $value;
             $compareValue = (string) $compareValue;

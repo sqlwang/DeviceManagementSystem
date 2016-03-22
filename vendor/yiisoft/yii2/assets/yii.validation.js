@@ -233,6 +233,16 @@ yii.validation = (function ($) {
             }
         },
 
+        trim: function ($form, attribute, options) {
+            var $input = $form.find(attribute.input);
+            var value = $input.val();
+            if (!options.skipOnEmpty || !pub.isEmpty(value)) {
+                value = $.trim(value);
+                $input.val(value);
+            }
+            return value;
+        },
+
         captcha: function (value, messages, options) {
             if (options.skipOnEmpty && pub.isEmpty(value)) {
                 return;
@@ -284,16 +294,16 @@ yii.validation = (function ($) {
                     valid = value !== compareValue;
                     break;
                 case '>':
-                    valid = parseFloat(value) > parseFloat(compareValue);
+                    valid = value > compareValue;
                     break;
                 case '>=':
-                    valid = parseFloat(value) >= parseFloat(compareValue);
+                    valid = value >= compareValue;
                     break;
                 case '<':
-                    valid = parseFloat(value) < parseFloat(compareValue);
+                    valid = value < compareValue;
                     break;
                 case '<=':
-                    valid = parseFloat(value) <= parseFloat(compareValue);
+                    valid = value <= compareValue;
                     break;
                 default:
                     valid = false;

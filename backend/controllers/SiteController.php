@@ -110,10 +110,7 @@ class SiteController extends Controller
 	{
 		$res = new Response();
 		//如果没有管理员存在，初始化管理员
-		$res->success = false;
-       	 	$res->message = '';
-		//	$res->to_json();
-	/*	$exist_admin = User::find()->all();
+		$exist_admin = User::find()->all();
 		if (empty($exist_admin)) {
 			$res->data = array(
 				'exist_admin' => false
@@ -135,7 +132,7 @@ class SiteController extends Controller
 					'exist_admin' => true
 				);
 			}
-		}*/
+		}
 		$res->to_json();
 	}
 	
