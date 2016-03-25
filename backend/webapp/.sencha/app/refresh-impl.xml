@@ -12,6 +12,7 @@
         <condition property="manifest.root.excludes" value="${app.bootstrap.manifest.exclude}">
             <isset property="app.bootstrap.manifest.exclude"/>
         </condition>
+
         <condition property="manifest.root.excludes" value="loadOrder">
             <and>
                 <x-is-true value="${app.has.js.sdk}"/>
@@ -24,22 +25,38 @@
 
         <property name="metadata.bootstrap.base.path" value="${build.bootstrap.metadata.dir}"/>
 
+        <condition property="refresh.file.filter" value="framework,package-core,package-${toolkit.name}">
+            <x-is-true value="${framework.isV6}"/>
+        </condition>
+        <property name="refresh.file.filter" value="framework,package-sencha-core"/>
+
         <if>
             <x-is-true value="${app.has.js.sdk}"/>
             <then>
-                <property name="manifest.bootstrap.js.exclude">
-                    exclude
-                        -tag=framework,package-sencha-core
-                </property>
                 <x-compile refid="${compiler.ref.id}">
                     <![CDATA[
-                        restore
-                            page
+                        include
+                            -all
                         and
-                        ${manifest.bootstrap.js.exclude}
+                        exclude
+                            -tag=${refresh.file.filter}
+                        and
+                        save
+                            bootstrap
                     ]]>
                 </x-compile>
             </then>
+            <else>
+                <x-compile refid="${compiler.ref.id}">
+                    <![CDATA[
+                        include
+                            -all
+                        and
+                        save
+                            bootstrap
+                    ]]>
+                </x-compile>
+            </else>
         </if>
 
         <x-get-relative-path from="${build.bootstrap.page.dir}"
@@ -61,8 +78,9 @@ Ext.manifest = Ext.manifest || "${build.json.bootstrap.rel.path}";
                 and
                 microload
                     -operation=manifest
+                    -fashion=${use.fashion}
                     -bootstrap
-                    -ignoreDisabled=false
+                    +ignoreDisabled
                     -exclude=${manifest.root.excludes}
                     -tpl={0}
                     -basePath=${metadata.bootstrap.base.path}
@@ -80,26 +98,6 @@ Ext.manifest = Ext.manifest || "${build.json.bootstrap.rel.path}";
                      overrideTplType="${bootstrap.override.tpltype}"
                      includeOverrides="${bootstrap.include.overrides}"
                      includeBoot="${bootstrap.include.boot}"/>
-
-        <!--regenerate json manifest bootstrap data-->
-        <if>
-            <equals arg1="${app.page.mode}" arg2="xcompile"/>
-            <then>
-                <!--
-                append the microloader and manifest to the end
-                of bootstrap.js
-                -->
-                <x-compile refid="${compiler.ref.id}">
-                    <![CDATA[
-                    microload
-                        -operation=microloader
-                        -microloaderPath=${app.microloader.bootstrap}
-                        -append
-                        -out=${app.bootstrap.js}
-                    ]]>
-                </x-compile>
-            </then>
-        </if>
 
         <!--
         create / overwrite bootstrap.json, which will be used
