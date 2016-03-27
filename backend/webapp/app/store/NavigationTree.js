@@ -16,7 +16,6 @@ Ext.define('SauceApp.store.NavigationTree', {
             children: [{
                 text: '客户信息',
                 viewType: 'housingPanel',
-                type: 'panel',
                 leaf: true,
                 iconCls: 'x-fa fa-building'
             }]
@@ -26,29 +25,35 @@ Ext.define('SauceApp.store.NavigationTree', {
             iconCls: 'x-fa fa-bank',
             expanded: true,
             children: [{
-                text: '房屋资源',
+                text: '设备列表',
                 viewType: 'housingPanel',
-                type: 'panel',
+                leaf: true,
+                iconCls: 'x-fa fa-building'
+            },{
+                text: '配置管理',
+                viewType: 'housingPanel',
+                leaf: true,
+                iconCls: 'x-fa fa-building'
+            },{
+                text: '设备类型',
+                viewType: 'housingPanel',
                 leaf: true,
                 iconCls: 'x-fa fa-building'
             }]
         },
         {
-            text: '配置管理',
+            text: '升级管理',
             leaf: false,
-            iconCls: 'x-fa fa-expeditedssl',
+            iconCls: 'x-fa fa-skyatlas',
             children: [{
-                text: '门禁主机',
-                iconCls: 'x-fa fa-calculator',
-                type: 'panel',
-                viewType: 'bulletinEdit',
+                text: 'APK升级管理',
+                iconCls: 'x-fa fa-check-circle-o',
+                viewType: 'operationGrid',
                 leaf: true
-            },
-            {
-                text: '门禁卡',
-                iconCls: 'x-fa fa-list-alt',
-                type: 'panel',
-                viewType: 'cardGrid',
+            },{
+                text: '固件升级管理',
+                iconCls: 'x-fa fa-check-circle-o',
+                viewType: 'operationGrid',
                 leaf: true
             }]
         },
@@ -57,22 +62,9 @@ Ext.define('SauceApp.store.NavigationTree', {
             leaf: false,
             iconCls: 'x-fa fa-user-plus',
             children: [{
-                text: '信息公告',
+                text: '日志列表',
                 iconCls: 'x-fa fa-wechat',
-                type: 'panel',
                 viewType: 'bulletinEdit',
-                leaf: true
-            }]
-        },
-        {
-            text: '固件管理',
-            leaf: false,
-            iconCls: 'x-fa fa-skyatlas',
-            children: [{
-                text: '在线设备管理',
-                iconCls: 'x-fa fa-check-circle-o',
-                type: 'panel',
-                viewType: 'operationGrid',
                 leaf: true
             }]
         },
@@ -81,10 +73,9 @@ Ext.define('SauceApp.store.NavigationTree', {
             leaf: false,
             iconCls: 'x-fa fa-skyatlas',
             children: [{
-                text: '办理记录',
+                text: '权限设置',
                 iconCls: 'x-fa fa-check-circle-o',
-                type: 'panel',
-                viewType: 'operationGrid',
+                viewType: 'privileges-management',
                 leaf: true
             }]
         },
@@ -93,7 +84,7 @@ Ext.define('SauceApp.store.NavigationTree', {
             leaf: false,
             iconCls: 'x-fa fa-skyatlas',
             children: [{
-                text: '人口统计',
+                text: '设备统计',
                 iconCls: 'x-fa fa-check-circle-o',
                 type: 'panel',
                 viewType: 'operationGrid',

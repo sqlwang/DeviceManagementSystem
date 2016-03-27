@@ -6,7 +6,6 @@
  * TODO - Replace this content of this view to suite the needs of your application.
  */
 Ext.define('SauceApp.view.main.Main', {
-    //extend: 'Ext.tab.Panel',
     extend: 'Ext.container.Viewport',
     xtype: 'app-main',
 
@@ -24,31 +23,40 @@ Ext.define('SauceApp.view.main.Main', {
 
 
 	layout: "border",
-    defaults: {
-        bodyPadding: 20,
-        tabConfig: {
-            plugins: 'responsive',
-            responsiveConfig: {
-                wide: {
-                    iconAlign: 'left',
-                    textAlign: 'left'
-                },
-                tall: {
-                    iconAlign: 'top',
-                    textAlign: 'center',
-                    width: 120
-                }
-            }
-        }
-    },
 	items: [{
         title: "智能设备管理系统",
         region: "north",
-        height: 80,
+        split: true,
+		items : [{
+			tbar : [{
+				xtype : 'splitbutton',
+				scale : 'medium',
+				text : '操作员管理',
+				menu : [{
+					text : '修改密码',
+					handler : function() {// adding a handler to "Add New X" menu item
+						if(!win) {
+							var win = Ext.widget('UserChangePassword');
+						}
+						win.show();
+					}
+				}]
+			},{
+				xtype : 'tbfill'
+			},{
+				xtype : 'button',
+				scale : 'medium',
+				handler: 'onClickButton',
+				text : '退出'
+			}]
+		}]
     }, {
-        title: "West Pannel",
+        //title: "West Pannel",
         region: "west",
         width: 250,
+        collapsible: true,
+        split: true,
+        	bodyPadding: '0 10 0 10',
         items:[{
             xtype: 'treelist',
             reference: 'navigationTreeList',
@@ -56,18 +64,24 @@ Ext.define('SauceApp.view.main.Main', {
             ui: 'navigation',
             store: 'NavigationTree',
             width: 250,
-            expanderFirst: false,
+            expanderFirst: true,
             expanderOnly: false,
             //只有一个节点能展开
-            singleExpand: true,
+            singleExpand: false,
             listeners: {
                 selectionchange: 'onNavigationTreeSelectionChange'
             }
         }]
     }, {
-        title: "Main Pannel",
-        html: "中",
-        region: "center"
+        //title: "Main Pannel",
+        //html: "中",
+        region: "center",
+        xtype:'tabpanel',
+        id: "maintab",
+        items: [{
+            title: 'Home',
+            html : 'A simple tab'
+        }]
     }]
     // items: [{
         // title: 'Home',
