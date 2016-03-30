@@ -198,7 +198,7 @@ LOCK TABLES `user` WRITE;
 
 INSERT INTO `user` (`user_id`, `username`, `auth_key`, `password_hash`, `password_reset_token`, `email`, `role`, `status`, `created_at`, `updated_at`)
 VALUES
-	(14,'wangtx','','2881010',NULL,'sqlwang.com@163.com',10,10,0,0);
+	(14,'wangtx','','123456',NULL,'sqlwang.com@163.com',10,10,0,0);
 
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;

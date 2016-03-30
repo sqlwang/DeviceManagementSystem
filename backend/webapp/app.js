@@ -16,7 +16,7 @@ Ext.application({
     // will gain a "viewport" plugin if it does not extend Ext.Viewport. With the
     // modern toolkit, the main view will be added to the Viewport.
     //
-    mainView: 'SauceApp.view.main.Main'
+   // mainView: 'SauceApp.view.main.Main'
 	
     //-------------------------------------------------------------------------
     // Most customizations should be made to SauceApp.Application. If you need to
