@@ -5,13 +5,14 @@ Ext.define('SauceApp.view.privileges.RoleList', {
 	loadMask: true,
 	id: 'adminRoleList',
 	store: 'privileges.RoleStore',
+	 margin: 15,
 	initComponent : function() {
 		if (Ext.isString(this.store)) {
 			this.store = Ext.create('SauceApp.store.privileges.RoleStore');
 		}
 		this.dockedItems = [{
 			xtype : 'toolbar',
-			//dock: 'bottom',
+			dock: 'bottom',
 			items : [{
 				iconCls: 'icon-role-add',
 				text : '添加角色',
@@ -30,7 +31,13 @@ Ext.define('SauceApp.view.privileges.RoleList', {
 				action : 'delRole',
 				scope : this
 			}]
-		}];	
+		},{
+	    	dock: 'bottom',
+	        xtype: 'pagingtoolbar',
+	        store : this.store,
+			displayInfo : true,
+			pageSize : 15
+	    }];	
 			
 		this.columns = [{
 			header : '角色名称',
@@ -50,12 +57,6 @@ Ext.define('SauceApp.view.privileges.RoleList', {
 			flex : 1
 		}];
 
-		this.bbar = new Ext.PagingToolbar({
-			store : this.store,
-			displayInfo : true,
-			dock : 'bottom',
-			pageSize : 15
-		});
 		this.callParent(arguments);
 		this.store.load();
 	}

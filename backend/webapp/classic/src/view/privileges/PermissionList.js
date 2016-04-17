@@ -8,6 +8,7 @@ Ext.define('SauceApp.view.privileges.PermissionList', {
     useArrows: true,
     rootVisible: false,
     animate: false,
+     margin: 15,
 	store: 'privileges.PermissionStore',
 	initComponent : function() {
 		if (Ext.isString(this.store)) {

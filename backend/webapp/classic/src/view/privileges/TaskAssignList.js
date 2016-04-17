@@ -4,6 +4,7 @@ Ext.define('SauceApp.view.Admin.Privileges.TaskAssignList', {
 	loadMask: true,
 	id: 'adminTaskAssignList',
 	store: 'Admin.TaskAssignStore',
+	 margin: 15,
 	initComponent : function() {
 		this.dockedItems = [{
 			xtype : 'toolbar',

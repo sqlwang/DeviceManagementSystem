@@ -36,7 +36,7 @@ Ext.define('SauceApp.store.NavigationTree', {
                 iconCls: 'x-fa fa-building'
             },{
                 text: '设备类型',
-                viewType: 'housingPanel',
+                viewType: 'deviceTypeGrid',
                 leaf: true,
                 iconCls: 'x-fa fa-building'
             }]
